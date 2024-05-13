@@ -1,5 +1,8 @@
 #include "raylib.h"
+#include "MapManager.h"
 #include <iostream>
+
+MapManager map;
 
 void Load();
 void Start();
@@ -20,8 +23,9 @@ int main() {
 }
 void Load()
 {
-    InitWindow(1080, 720, "Bloons TD 8");
+    InitWindow(1000, 1000, "Bloons TD 8");
     SetTargetFPS(60);
+    map.Load();
 }
 
 void Start()
@@ -36,6 +40,7 @@ void Draw()
 {
     BeginDrawing();
     ClearBackground(Color({ 255, 255, 255, 255 }));
+    map.Draw();
     EndDrawing();
 }
 

@@ -133,7 +133,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="Tile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="MapManager.h" />
+    <ClInclude Include="Tile.h" />
+    <ClInclude Include="TileType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
