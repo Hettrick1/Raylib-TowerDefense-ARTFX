@@ -1,22 +1,45 @@
 #include "raylib.h"
 #include <iostream>
 
-using namespace std;
+void Load();
+void Start();
+void Update();
+void Draw();
+void Unload();
 
 int main() {
-
-    
-    cout << "Hello World" << endl;
-
-    InitWindow(300, 300, "My first Raylib window!");
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(DARKGREEN);
-        EndDrawing();
+    Load();
+    Start();
+    while (!WindowShouldClose())
+    {
+        Update();
+        Draw();
     }
-
-    CloseWindow();
+    Unload();
     return 0;
+}
+void Load()
+{
+    InitWindow(1080, 720, "Bloons TD 8");
+    SetTargetFPS(60);
+}
+
+void Start()
+{
+}
+
+void Update()
+{
+}
+
+void Draw()
+{
+    BeginDrawing();
+    ClearBackground(Color({ 255, 255, 255, 255 }));
+    EndDrawing();
+}
+
+void Unload()
+{
+    CloseWindow();
 }
