@@ -11,6 +11,8 @@ private:
 	int mPosY;
 	int mSizeX;
 	int mSizeY;
+	int mCenterPosX;
+	int mCenterPosY;
 	TileType mType;
 	Color mColor;
 public:
@@ -24,6 +26,7 @@ public:
 	TileType GetTileType();
 	int GetPosX() const { return mPosX; }
 	int GetPosY() const { return mPosY; }
+	Vector2 GetCenterPos() { return { (float)mCenterPosX, (float)mCenterPosY }; }
 	int GetSizeX() const { return mSizeX; }
 	int GetSizeY() const { return mSizeY; }
 };

@@ -4,7 +4,7 @@ MapManager::MapManager()
 {
 	mMapImage = Image();
 	mMapIndex = 1;
-	mSpawnPos = { 500, 500 };
+	mSpawnIndex = {0,0};
 }
 
 MapManager::~MapManager()
@@ -29,6 +29,10 @@ void MapManager::Load()
 			}
 			else if (colors[index].b > 0 && colors[index].r == 0 && colors[index].g == 0) {
 				mMap[i][j]->ChangeType(TileType::TURRET);
+			}
+			else if (colors[index].b == 0 && colors[index].r == 0 && colors[index].g == 0) {
+				mMap[i][j]->ChangeType(TileType::ROAD);
+				mSpawnIndex = { (float)j, (float)i };
 			}
 			index += 1;
 		}
@@ -66,11 +70,11 @@ void MapManager::SetMapIndex(int index)
 
 Tile* MapManager::GetTile(int i, int j)
 {
-	return mMap[i][j];
+	return mMap[j][i];
 }
 
-Vector2 MapManager::GetSpawnPosition()
+Vector2 MapManager::GetSpawnTileIndex()
 {
-	return mSpawnPos;
+	return mSpawnIndex;
 }
 

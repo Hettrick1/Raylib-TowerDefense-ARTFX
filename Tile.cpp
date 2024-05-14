@@ -6,6 +6,8 @@ Tile::Tile(int posX, int posY, int sizeX, int sizeY)
 	mPosY = posY;
 	mSizeX = sizeX;
 	mSizeY = sizeY;
+	mCenterPosX = mPosX + (mSizeX/2);
+	mCenterPosY = mPosY + (mSizeY / 2);
 	mType = TileType::GRASS;
 	mColor = GREEN;
 }
@@ -21,6 +23,7 @@ void Tile::Load()
 void Tile::Draw()
 {
 	DrawRectangle(mPosX, mPosY, mSizeX, mSizeY, mColor);
+	DrawCircle(mCenterPosX, mCenterPosY, 5, RED);
 }
 
 void Tile::Update()

@@ -3,5 +3,6 @@
 enum class TileType {
 	ROAD,
 	GRASS,
-	TURRET
+	TURRET,
+	SPAWN
 };

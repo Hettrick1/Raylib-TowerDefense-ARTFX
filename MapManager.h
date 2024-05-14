@@ -7,7 +7,7 @@ private:
 	Tile* mMap[20][20];
 	Image mMapImage;
 	int mMapIndex;
-	Vector2 mSpawnPos;
+	Vector2 mSpawnIndex;
 
 public:
 	MapManager();
@@ -19,7 +19,7 @@ public:
 	void Unload();
 	void SetMapIndex(int index);
 	Tile* GetTile(int i, int j);
-	Vector2 GetSpawnPosition();
+	Vector2 GetSpawnTileIndex();
 };
 
 
