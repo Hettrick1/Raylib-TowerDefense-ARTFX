@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy(Vector2 spawnPos, Vector2 destinationIndex)
+Enemy::Enemy(Vector2 spawnPos, Vector2 destinationIndex, MapManager& map)
 {
 	mHealth = 100;
 	mSpawnPos = spawnPos;
@@ -13,6 +13,7 @@ Enemy::Enemy(Vector2 spawnPos, Vector2 destinationIndex)
 	mSpeed = 300;
 	mDamage = 10;
 	mCoins = 100;
+	mMap = map;
 }
 
 Enemy::~Enemy()
@@ -28,16 +29,16 @@ void Enemy::Draw()
 	DrawCircle(mPosition.x, mPosition.y, 20, BLUE);
 }
 
-void Enemy::Update(MapManager& map)
+void Enemy::Update()
 {
-	Move(map);
+	Move();
 }
 
 void Enemy::Unload()
 {
 }
 
-void Enemy::Move(MapManager& map)
+void Enemy::Move()
 {
 	switch (mDirection)
 	{
@@ -58,71 +59,83 @@ void Enemy::Move(MapManager& map)
 		switch (mDirection)
 		{
 		case 0: // right
-			if (map.GetTile(mDestinationIndex.x + 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+			if (mMap.GetTile(mDestinationIndex.x + 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
 				mDirection = 0;
 				mDestinationIndex.x += 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x, mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
 				mDirection = 1;
 				mDestinationIndex.y += 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x, mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
 				mDirection = 2;
 				mDestinationIndex.y -= 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+			}
+			else {
+				std::cout << "ATTACK";
 			}
 			break;
 		case 1: // down
-			if (map.GetTile(mDestinationIndex.x, mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+			if (mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
 				mDirection = 1;
 				mDestinationIndex.y += 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x - 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x - 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
 				mDirection = 3;
 				mDestinationIndex.x -= 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x + 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x + 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
 				mDirection = 0;
 				mDestinationIndex.x += 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+			}
+			else {
+				std::cout << "ATTACK";
 			}
 			break;
 		case 2: // up
-			if (map.GetTile(mDestinationIndex.x, mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+			if (mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
 				mDirection = 2;
 				mDestinationIndex.y -= 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x + 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x + 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
 				mDirection = 0; 
 				mDestinationIndex.x += 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x - 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x - 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
 				mDirection = 3;
 				mDestinationIndex.x -= 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+			}
+			else {
+				std::cout << "ATTACK";
 			}
 			break;
 		case 3: // left
-			if (map.GetTile(mDestinationIndex.x - 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+			if (mMap.GetTile(mDestinationIndex.x - 1, mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
 				mDirection = 3;
 				mDestinationIndex.x -= 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x, mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
 				mDirection = 2;
 				mDestinationIndex.y -= 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
 			}
-			else if (map.GetTile(mDestinationIndex.x, mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+			else if (mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
 				mDirection = 1;
 				mDestinationIndex.y += 1;
-				mDestination = map.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+				mDestination = mMap.GetTile(mDestinationIndex.x, mDestinationIndex.y)->GetCenterPos();
+			}
+			else {
+				std::cout << "ATTACK";
 			}
 			break;
 		}

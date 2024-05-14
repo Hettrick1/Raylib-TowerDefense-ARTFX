@@ -3,7 +3,7 @@
 MapManager::MapManager()
 {
 	mMapImage = Image();
-	mMapIndex = 1;
+	mMapIndex = 2;
 	mSpawnIndex = {0,0};
 }
 
@@ -47,6 +47,16 @@ void MapManager::Start()
 
 void MapManager::Update()
 {
+	for (int i = 0; i < 20; i++) {
+		for (int j = 0; j < 20; j++) {
+			if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+				mMap[i][j]->SetClicked(false);
+			}
+			if (mMap[i][j]->GetTileType() == TileType::GRASS) {
+				mMap[i][j]->CheckClicked();
+			}
+		}
+	}
 }
 
 void MapManager::Draw()

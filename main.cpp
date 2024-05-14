@@ -30,7 +30,7 @@ void Load()
     SetTargetFPS(60);
     map.Load();
     enemies = {
-    Enemy(map.GetTile(map.GetSpawnTileIndex().x, map.GetSpawnTileIndex().y)->GetCenterPos(), map.GetSpawnTileIndex())
+    Enemy(map.GetTile(map.GetSpawnTileIndex().x, map.GetSpawnTileIndex().y)->GetCenterPos(), map.GetSpawnTileIndex(), map)
     };
 }
 
@@ -40,8 +40,9 @@ void Start()
 
 void Update()
 {
+    map.Update();
     for (Enemy& enemy : enemies) {
-        enemy.Update(map);
+        enemy.Update();
     }
 }
 

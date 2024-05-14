@@ -17,13 +17,14 @@ private:
 	float mSpeed;
 	int	mDamage;
 	int	mCoins;
+	MapManager mMap;
 public:
-	Enemy(Vector2 spawnPos, Vector2 destinationIndex);
+	Enemy(Vector2 spawnPos, Vector2 destinationIndex, MapManager& map);
 	~Enemy();
 	void Load();
 	void Draw();
-	void Update(MapManager& map);
+	void Update();
 	void Unload();
-	void Move(MapManager& map);
+	void Move();
 };
 
