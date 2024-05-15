@@ -15,6 +15,8 @@ MapManager::MapManager()
 	mUpgradeShopButtons = {
 
 	};
+	mDartMonkeyTexture = Texture2D();
+	mTackShooterTexture = Texture2D();
 }
 
 MapManager::~MapManager()
@@ -49,6 +51,8 @@ void MapManager::Load()
 	}
 	UnloadImageColors(colors);
 	UnloadImage(mMapImage);
+	mDartMonkeyTexture = LoadTexture("resources/sprites/DartMonkey.png");
+	mTackShooterTexture = LoadTexture("resources/sprites/TackShooter.png");
 }
 
 void MapManager::Start()
@@ -76,6 +80,12 @@ void MapManager::Update()
 	if (mShowBuyShop) {
 		UpdateBuyShop();
 	}
+	for (DartMonkey& turret : mDartMonkeyTurrets) {
+		turret.Update();
+	}
+	for (TackShooter& turret : mTackShooterTurrets) {
+		turret.Update();
+	}
 }
 void MapManager::UpdateBuyShop()
 {
@@ -86,12 +96,16 @@ void MapManager::UpdateBuyShop()
 		mBuyShopButtons[0].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
 		HideShopMenu();
+		DartMonkey turret = DartMonkey({(float) mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mDartMonkeyTexture);
+		mDartMonkeyTurrets.push_back(turret);
 		//create first turret
 	}
 	if (mBuyShopButtons[1].GetClickedBool()) {
 		mBuyShopButtons[1].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
 		HideShopMenu();
+		TackShooter turret = TackShooter({ (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mTackShooterTexture);
+		mTackShooterTurrets.push_back(turret);
 		//create second turret
 	}
 	if (mBuyShopButtons[2].GetClickedBool()) {
@@ -123,6 +137,12 @@ void MapManager::Draw()
 	if (mShowBuyShop) {
 		DrawBuyShop();
 	}
+	for (DartMonkey& turret : mDartMonkeyTurrets) {
+		turret.Draw();
+	}
+	for (TackShooter& turret : mTackShooterTurrets) {
+		turret.Draw();
+	}
 }
 void MapManager::DrawBuyShop()
 {
@@ -140,7 +160,8 @@ void MapManager::DrawUpgradeShop()
 
 void MapManager::Unload()
 {
-
+	UnloadTexture(mDartMonkeyTexture);
+	UnloadTexture(mTackShooterTexture);
 }
 
 void MapManager::SetMapIndex(int index)

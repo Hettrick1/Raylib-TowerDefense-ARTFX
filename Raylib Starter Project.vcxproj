@@ -134,19 +134,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Buttons.cpp" />
+    <ClCompile Include="DartMonkey.cpp" />
     <ClCompile Include="Datas.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="TackShooter.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="TurretParent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buttons.h" />
+    <ClInclude Include="DartMonkey.h" />
     <ClInclude Include="Datas.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="MapManager.h" />
+    <ClInclude Include="TackShooter.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileType.h" />
+    <ClInclude Include="TurretParent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

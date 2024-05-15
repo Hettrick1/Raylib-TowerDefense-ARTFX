@@ -1,7 +1,11 @@
 #pragma once
+#include "raylib.h"
 #include "Tile.h"
 #include "Buttons.h"
 #include "Datas.h"
+#include "DartMonkey.h"
+#include "TackShooter.h"
+#include "TurretParent.h"
 #include <vector>
 class MapManager
 {
@@ -14,6 +18,9 @@ private:
 	bool mShowBuyShop;
 	std::vector<Buttons> mBuyShopButtons;
 	std::vector<Buttons> mUpgradeShopButtons;
+	std::vector<DartMonkey> mDartMonkeyTurrets;
+	std::vector<TackShooter> mTackShooterTurrets;
+	Texture2D mDartMonkeyTexture, mTackShooterTexture;
 
 public:
 	MapManager();

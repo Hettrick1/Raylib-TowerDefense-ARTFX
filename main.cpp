@@ -59,5 +59,6 @@ void Draw()
 
 void Unload()
 {
+    map.Unload();
     CloseWindow();
 }
