@@ -10,7 +10,7 @@ Enemy::Enemy(Vector2 spawnPos, Vector2 destinationIndex, MapManager& map)
 	mDirection = 0; // 0 right, 1 down, 2 up, 3 left;
 	mIndexX = 1; // 1 horizontal front, -1 horizontal back
 	mIndexY = 0; // 1 vertical front, -1 vertical back
-	mSpeed = 300;
+	mSpeed = 0;
 	mDamage = 10;
 	mCoins = 100;
 	mMap = map;

@@ -12,6 +12,7 @@ Tile::Tile(int posX, int posY, int sizeX, int sizeY)
 	mColor = GREEN;
 	mIsHovered = false;
 	mClicked = false;
+	mShowRectangle = false;
 }
 
 Tile::~Tile()
@@ -30,7 +31,7 @@ void Tile::Draw()
 		DrawRectangle(mPosX, mPosY, mSizeX, mSizeY, Color{ 0, 0, 0, 100 });
 		DrawRectangleLinesEx({ (float)mPosX, (float)mPosY, (float)mSizeX, (float)mSizeY }, 4, YELLOW);
 	}
-	if (mClicked) {
+	if (mShowRectangle) {
 		DrawRectangle(mPosX, mPosY, mSizeX, mSizeY, Color{ 0, 0, 0, 200 });
 		DrawRectangleLinesEx({ (float)mPosX, (float)mPosY, (float)mSizeX, (float)mSizeY }, 4, YELLOW);
 	}
@@ -65,7 +66,7 @@ void Tile::CheckClicked()
 		SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
 		mIsHovered = true;
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-			mClicked = true;
+			mClicked = !mClicked;
 		}
 	}
 	else if (mIsHovered) {
@@ -87,5 +88,15 @@ void Tile::SetClicked(bool clicked)
 bool Tile::GetIsClicked()
 {
 	return mClicked;
+}
+
+void Tile::SetShowRectangle(bool show)
+{
+	mShowRectangle = show;
+}
+
+bool Tile::GetShowRectangle()
+{
+	return mShowRectangle;
 }
 

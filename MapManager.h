@@ -1,5 +1,6 @@
 #pragma once
 #include "Tile.h"
+#include "Shop.h"
 #include <vector>
 class MapManager
 {
@@ -8,6 +9,9 @@ private:
 	Image mMapImage;
 	int mMapIndex;
 	Vector2 mSpawnIndex;
+	Vector2 mTileClickedIndex;
+	bool mShowBuyShop;
+	Shop mShop;
 
 public:
 	MapManager();

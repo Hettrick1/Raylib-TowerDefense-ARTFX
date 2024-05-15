@@ -5,6 +5,9 @@ MapManager::MapManager()
 	mMapImage = Image();
 	mMapIndex = 2;
 	mSpawnIndex = {0,0};
+	mTileClickedIndex = {0,0};
+	mShowBuyShop = false;
+	mShop = Shop();
 }
 
 MapManager::~MapManager()
@@ -49,13 +52,23 @@ void MapManager::Update()
 {
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {
-			if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-				mMap[i][j]->SetClicked(false);
-			}
+			
 			if (mMap[i][j]->GetTileType() == TileType::GRASS) {
 				mMap[i][j]->CheckClicked();
+				if (mMap[i][j]->GetIsClicked()) {
+					mMap[i][j]->SetClicked(false);
+					mMap[i][j]->SetShowRectangle(!mMap[i][j]->GetShowRectangle());
+					mShowBuyShop = mMap[i][j]->GetShowRectangle();
+					if (i != mTileClickedIndex.x || j != mTileClickedIndex.y) {
+						mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->SetShowRectangle(false);
+						mTileClickedIndex = { (float)i, (float)j };
+					}
+				}
 			}
 		}
+	}
+	if (mShowBuyShop) {
+		mShop.UpdateBuyShop();
 	}
 }
 
@@ -65,6 +78,9 @@ void MapManager::Draw()
 		for (int j = 0; j < 20; j++) {
 			mMap[i][j]->Draw();
 		}
+	}
+	if (mShowBuyShop) {
+		mShop.DrawBuyShop();
 	}
 }
 

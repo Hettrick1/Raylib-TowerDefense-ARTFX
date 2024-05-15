@@ -26,7 +26,7 @@ int main() {
 }
 void Load()
 {
-    InitWindow(1000, 1000, "Bloons TD 8");
+    InitWindow(1300, 1000, "Bloons TD 8");
     SetTargetFPS(60);
     map.Load();
     enemies = {

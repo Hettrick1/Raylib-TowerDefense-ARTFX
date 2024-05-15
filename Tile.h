@@ -17,6 +17,7 @@ private:
 	Color mColor;
 	bool mIsHovered;
 	bool mClicked;
+	bool mShowRectangle;
 public:
 	Tile(int posX, int posY, int sizeX, int sizeY);
 	~Tile();
@@ -34,6 +35,8 @@ public:
 	int GetSizeY() const { return mSizeY; }
 	void SetClicked(bool clicked);
 	bool GetIsClicked();
+	void SetShowRectangle(bool show);
+	bool GetShowRectangle();
 };
 
 
