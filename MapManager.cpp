@@ -7,7 +7,14 @@ MapManager::MapManager()
 	mSpawnIndex = {0,0};
 	mTileClickedIndex = {0,0};
 	mShowBuyShop = false;
-	mShop = Shop();
+	mBuyShopButtons = {
+		Buttons({1050, 250, 200, 200}, YELLOW, "Turret 1", BLACK, 30),
+		Buttons({1050, 550, 200, 200}, YELLOW, "Turret 2", BLACK, 30),
+		Buttons({1050, 850, 200, 50}, RED, "Quit shop", BLACK, 30)
+	};
+	mUpgradeShopButtons = {
+
+	};
 }
 
 MapManager::~MapManager()
@@ -51,8 +58,7 @@ void MapManager::Start()
 void MapManager::Update()
 {
 	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 20; j++) {
-			
+		for (int j = 0; j < 20; j++) {		
 			if (mMap[i][j]->GetTileType() == TileType::GRASS) {
 				mMap[i][j]->CheckClicked();
 				if (mMap[i][j]->GetIsClicked()) {
@@ -68,8 +74,18 @@ void MapManager::Update()
 		}
 	}
 	if (mShowBuyShop) {
-		mShop.UpdateBuyShop();
+		UpdateBuyShop();
 	}
+}
+void MapManager::UpdateBuyShop()
+{
+	for (Buttons& button : mBuyShopButtons) {
+		button.Update();
+	}
+}
+
+void MapManager::UpdateUpgradeShop()
+{
 }
 
 void MapManager::Draw()
@@ -80,8 +96,21 @@ void MapManager::Draw()
 		}
 	}
 	if (mShowBuyShop) {
-		mShop.DrawBuyShop();
+		DrawBuyShop();
 	}
+}
+void MapManager::DrawBuyShop()
+{
+	DrawRectangle(1000, 0, 400, 1000, GRAY);
+	SetMoneyPos({ (float)(1150 - MeasureText(TextFormat("%i", GetMoney()), 50) / 2), GetMoneyPos().y });
+	DrawText(TextFormat("%i", GetMoney()), GetMoneyPos().x, GetMoneyPos().y, 50, WHITE);
+	for (Buttons& button : mBuyShopButtons) {
+		button.Draw();
+	}
+}
+
+void MapManager::DrawUpgradeShop()
+{
 }
 
 void MapManager::Unload()

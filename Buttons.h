@@ -25,6 +25,7 @@ private:
     Color mDisableColor;
     Texture2D mTexture;
     float mTextureSize;
+    float mBorderThickness;
 public:
     Buttons(Vector2 position, Vector2 size, Color buttonColor, std::string text, Color textColor, int fontSize);
     Buttons(Rectangle rectangle, Color buttonColor, std::string text, Color textColor, int fontSize);
@@ -44,6 +45,7 @@ public:
     void SetHoveredBool(bool hover);
     void SetTexture(Texture2D& texture, float size);
     void SetText(std::string text);
+    void SetBorderThickness(float thickness);
     void Update();
     void Draw();
     void Unload();

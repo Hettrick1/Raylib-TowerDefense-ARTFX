@@ -21,6 +21,7 @@ Buttons::Buttons(Vector2 position, Vector2 size, Color buttonColor, std::string 
 	mSeeText = true;
 	mTexture = Texture(); 
 	float mTextureSize = 1;
+	mBorderThickness = 2;
 }
 
 Buttons::Buttons(Rectangle rectangle, Color buttonColor, std::string text, Color textColor, int fontSize)
@@ -44,6 +45,7 @@ Buttons::Buttons(Rectangle rectangle, Color buttonColor, std::string text, Color
 	mSeeText = true;
 	mTexture = Texture();
 	float mTextureSize = 1;
+	mBorderThickness = 2;
 }
 
 Buttons::Buttons(Rectangle rectangle, Color buttonColor, Texture2D& texture, float textureSize)
@@ -67,6 +69,7 @@ Buttons::Buttons(Rectangle rectangle, Color buttonColor, Texture2D& texture, flo
 	mSeeText = false;
 	mTexture = texture;
 	mTextureSize = textureSize;
+	mBorderThickness = 2;
 }
 
 Buttons::~Buttons()
@@ -143,6 +146,11 @@ void Buttons::SetText(std::string text)
 	mText = text;
 }
 
+void Buttons::SetBorderThickness(float thickness)
+{
+	mBorderThickness = thickness;
+}
+
 void Buttons::Update()
 {
 	if (mIsActive && mEnable) {
@@ -191,7 +199,7 @@ void Buttons::Draw()
 			color.a = (color.a < 0) ? 0 : color.a;
 			DrawRectangle(mPosition.x, mPosition.y, mSize.x, mSize.y, color);
 		}
-		DrawRectangleLines(mPosition.x, mPosition.y, mSize.x, mSize.y, mOutlineColor);
+		DrawRectangleLinesEx({ mPosition.x, mPosition.y, mSize.x, mSize.y }, mBorderThickness, mOutlineColor);
 		if (!mSeeText) {
 			DrawTextureEx(mTexture, Vector2{ mPosition.x + (mSize.x - mTexture.width) / 2.0f, mPosition.y + (mSize.y - mTexture.height) / 2.0f }, 0, mTextureSize, WHITE);
 		}

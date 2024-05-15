@@ -1,6 +1,7 @@
 #pragma once
 #include "Tile.h"
-#include "Shop.h"
+#include "Buttons.h"
+#include "Datas.h"
 #include <vector>
 class MapManager
 {
@@ -11,7 +12,8 @@ private:
 	Vector2 mSpawnIndex;
 	Vector2 mTileClickedIndex;
 	bool mShowBuyShop;
-	Shop mShop;
+	std::vector<Buttons> mBuyShopButtons;
+	std::vector<Buttons> mUpgradeShopButtons;
 
 public:
 	MapManager();
@@ -19,7 +21,11 @@ public:
 	void Load();
 	void Start();
 	void Update();
+	void UpdateBuyShop();
+	void UpdateUpgradeShop();
 	void Draw();
+	void DrawBuyShop();
+	void DrawUpgradeShop();
 	void Unload();
 	void SetMapIndex(int index);
 	Tile* GetTile(int i, int j);

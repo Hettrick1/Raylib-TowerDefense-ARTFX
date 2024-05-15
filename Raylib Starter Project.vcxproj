@@ -134,17 +134,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Buttons.cpp" />
+    <ClCompile Include="Datas.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapManager.cpp" />
-    <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buttons.h" />
+    <ClInclude Include="Datas.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="MapManager.h" />
-    <ClInclude Include="Shop.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileType.h" />
   </ItemGroup>
