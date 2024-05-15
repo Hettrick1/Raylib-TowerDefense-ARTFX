@@ -82,10 +82,35 @@ void MapManager::UpdateBuyShop()
 	for (Buttons& button : mBuyShopButtons) {
 		button.Update();
 	}
+	if (mBuyShopButtons[0].GetClickedBool()) {
+		mBuyShopButtons[0].SetClickedBool(false);
+		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
+		HideShopMenu();
+		//create first turret
+	}
+	if (mBuyShopButtons[1].GetClickedBool()) {
+		mBuyShopButtons[1].SetClickedBool(false);
+		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
+		HideShopMenu();
+		//create second turret
+	}
+	if (mBuyShopButtons[2].GetClickedBool()) {
+		mBuyShopButtons[2].SetClickedBool(false);
+		HideShopMenu();
+	}
 }
 
 void MapManager::UpdateUpgradeShop()
 {
+}
+
+void MapManager::HideShopMenu()
+{
+	mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->SetShowRectangle(false);
+	mShowBuyShop = false;
+	for (Buttons& button : mBuyShopButtons) {
+		button.ResetTimer();
+	}
 }
 
 void MapManager::Draw()

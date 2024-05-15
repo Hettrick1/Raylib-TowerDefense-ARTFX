@@ -151,6 +151,12 @@ void Buttons::SetBorderThickness(float thickness)
 	mBorderThickness = thickness;
 }
 
+void Buttons::ResetTimer()
+{
+	mTimer = 0.5;
+	mIsClicked = false;
+}
+
 void Buttons::Update()
 {
 	if (mIsActive && mEnable) {

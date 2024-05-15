@@ -46,6 +46,7 @@ public:
     void SetTexture(Texture2D& texture, float size);
     void SetText(std::string text);
     void SetBorderThickness(float thickness);
+    void ResetTimer();
     void Update();
     void Draw();
     void Unload();

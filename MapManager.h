@@ -23,6 +23,7 @@ public:
 	void Update();
 	void UpdateBuyShop();
 	void UpdateUpgradeShop();
+	void HideShopMenu();
 	void Draw();
 	void DrawBuyShop();
 	void DrawUpgradeShop();
