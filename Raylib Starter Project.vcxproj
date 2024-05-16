@@ -149,6 +149,7 @@
     <ClInclude Include="Datas.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="MapManager.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="TackShooter.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileType.h" />
