@@ -14,7 +14,7 @@ void TackShooter::Update()
 	if (mCanShoot) {
 		mTimerSinceLastShot -= GetFrameTime();
 		if (mTimerSinceLastShot < 0) {
-			mTimerSinceLastShot = 1;
+			mTimerSinceLastShot = mShootingSpeed;
 			Shoot();
 		}
 	}
