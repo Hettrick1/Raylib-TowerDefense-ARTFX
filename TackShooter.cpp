@@ -22,21 +22,21 @@ void TackShooter::Update()
 		mTimerSinceLastShot = 0;
 	}
 	for (Projectile& projectile : projectiles) {
-		if (!projectile.isDestroyed) {
+		if (!projectile.isOutOfRange) {
 			projectile.position.x += 150 * projectile.velocity.x * GetFrameTime();
 			projectile.position.y += 150 * projectile.velocity.y * GetFrameTime();
 			float distance = sqrt(pow(projectile.position.x - projectile.startPosition.x, 2) + pow(projectile.position.y - projectile.startPosition.y, 2));
 			if (distance > projectile.range) {
-				projectile.isDestroyed = true;
+				projectile.isOutOfRange = true;
 			}
 			for (Enemy& enemy : *mAllEnemies) {
-				if (CheckCollisionCircles(projectile.position, 5, enemy.mPosition, 20)) {
+				if (!enemy.mIsDead && CheckCollisionCircles(projectile.position, 5, enemy.mPosition, 20)) {
 					projectile.isDestroyed = true;
 					enemy.mIsDead = true;
 				}
 			}
 		}
-		if (projectile.isDestroyed) {
+		if (projectile.isOutOfRange) {
 			projectiles.erase(begin(projectiles));
 		}
 	}
@@ -69,6 +69,7 @@ void TackShooter::Shoot()
 		newProjectile.velocity.x = cos(angle);
 		newProjectile.velocity.y = sin(angle);
 		newProjectile.isDestroyed = false;
+		newProjectile.isOutOfRange = false;
 		projectiles.push_back(newProjectile);
 	}
 

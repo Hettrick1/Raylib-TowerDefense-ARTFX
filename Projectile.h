@@ -7,4 +7,5 @@ struct Projectile {
     Vector2 velocity;
     float range;
     bool isDestroyed;
+    bool isOutOfRange;
 };
