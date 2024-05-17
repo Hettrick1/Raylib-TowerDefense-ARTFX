@@ -53,6 +53,7 @@ void MapManager::Load()
 	UnloadImage(mMapImage);
 	mDartMonkeyTexture = LoadTexture("resources/sprites/DartMonkey.png");
 	mTackShooterTexture = LoadTexture("resources/sprites/TackShooter.png");
+	CreateNewEnemy();
 }
 
 void MapManager::Start()
@@ -86,6 +87,7 @@ void MapManager::Update()
 	for (TackShooter& turret : mTackShooterTurrets) {
 		turret.Update();
 	}
+	MoveEnemies();
 }
 void MapManager::UpdateBuyShop()
 {
@@ -96,7 +98,7 @@ void MapManager::UpdateBuyShop()
 		mBuyShopButtons[0].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
 		HideShopMenu();
-		DartMonkey turret = DartMonkey({(float) mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mDartMonkeyTexture);
+		DartMonkey turret = DartMonkey({(float) mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mDartMonkeyTexture, &mEnemies);
 		mDartMonkeyTurrets.push_back(turret);
 		//create first turret
 	}
@@ -104,7 +106,7 @@ void MapManager::UpdateBuyShop()
 		mBuyShopButtons[1].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
 		HideShopMenu();
-		TackShooter turret = TackShooter({ (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mTackShooterTexture);
+		TackShooter turret = TackShooter({ (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mTackShooterTexture, &mEnemies);
 		mTackShooterTurrets.push_back(turret);
 		//create second turret
 	}
@@ -143,6 +145,9 @@ void MapManager::Draw()
 	for (TackShooter& turret : mTackShooterTurrets) {
 		turret.Draw();
 	}
+	for (Enemy& enemy : mEnemies) {
+		DrawCircle(enemy.mPosition.x, enemy.mPosition.y, 20, BLUE);
+	}
 }
 void MapManager::DrawBuyShop()
 {
@@ -160,6 +165,7 @@ void MapManager::DrawUpgradeShop()
 
 void MapManager::Unload()
 {
+	std::cout << mEnemies.size();
 	UnloadTexture(mDartMonkeyTexture);
 	UnloadTexture(mTackShooterTexture);
 }
@@ -177,5 +183,128 @@ Tile* MapManager::GetTile(int i, int j)
 Vector2 MapManager::GetSpawnTileIndex()
 {
 	return mSpawnIndex;
+}
+
+void MapManager::CreateNewEnemy()
+{
+	Enemy newEnemy;
+
+	newEnemy.mCoins = 100;
+	newEnemy.mDamage = 1;
+	newEnemy.mDestination = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
+	newEnemy.mDestinationIndex = mSpawnIndex;
+	newEnemy.mDirection = 0;
+	newEnemy.mHealth = 1;
+	newEnemy.mSpawnPos = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
+	newEnemy.mPosition = { (float)newEnemy.mSpawnPos.x - 10, (float)newEnemy.mSpawnPos.y };
+	newEnemy.mSpeed = 100;
+
+	mEnemies.push_back(newEnemy);
+}
+
+void MapManager::MoveEnemies()
+{
+	for (Enemy& enemy : mEnemies) { // Bon c'est pas propre mais j'avais une inclusion circulaire et c'est le moyen le plus simple de la régler
+		switch (enemy.mDirection)
+		{
+		case 0:
+			enemy.mPosition.x += enemy.mSpeed * GetFrameTime();
+			break;
+		case 1:
+			enemy.mPosition.y += enemy.mSpeed * GetFrameTime();
+			break;
+		case 2:
+			enemy.mPosition.y -= enemy.mSpeed * GetFrameTime();
+			break;
+		case 3:
+			enemy.mPosition.x -= enemy.mSpeed * GetFrameTime();
+			break;
+		}
+		if ((enemy.mDirection == 0 && enemy.mPosition.x > enemy.mDestination.x) || (enemy.mDirection == 1 && enemy.mPosition.y > enemy.mDestination.y) || (enemy.mDirection == 2 && enemy.mPosition.y < enemy.mDestination.y) || (enemy.mDirection == 3 && enemy.mPosition.x < enemy.mDestination.x)) {
+			switch (enemy.mDirection)
+			{
+			case 0: // right
+				if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 0;
+					enemy.mDestinationIndex.x += 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 1;
+					enemy.mDestinationIndex.y += 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 2;
+					enemy.mDestinationIndex.y -= 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else {
+					std::cout << "ATTACK";
+				}
+				break;
+			case 1: // down
+				if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 1;
+					enemy.mDestinationIndex.y += 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 3;
+					enemy.mDestinationIndex.x -= 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 0;
+					enemy.mDestinationIndex.x += 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else {
+					std::cout << "ATTACK";
+				}
+				break;
+			case 2: // up
+				if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 2;
+					enemy.mDestinationIndex.y -= 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 0;
+					enemy.mDestinationIndex.x += 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 3;
+					enemy.mDestinationIndex.x -= 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else {
+					std::cout << "ATTACK";
+				}
+				break;
+			case 3: // left
+				if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 3;
+					enemy.mDestinationIndex.x -= 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 2;
+					enemy.mDestinationIndex.y -= 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+					enemy.mDirection = 1;
+					enemy.mDestinationIndex.y += 1;
+					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+				}
+				else {
+					std::cout << "ATTACK";
+				}
+				break;
+			}
+		}
+	}
 }
 

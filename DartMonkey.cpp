@@ -1,6 +1,6 @@
 #include "DartMonkey.h"
 
-DartMonkey::DartMonkey(Vector2 position, Texture2D& texture) : TurretParent(250, position, texture, 50, 0.5f)
+DartMonkey::DartMonkey(Vector2 position, Texture2D& texture, std::vector<Enemy>* allEnemies) : TurretParent(250, position, texture, 50, 0.5f, allEnemies)
 {
 	mRotation = 0;
 	mTimerSinceLastShot = 0;

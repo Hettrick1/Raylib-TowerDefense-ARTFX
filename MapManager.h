@@ -6,7 +6,9 @@
 #include "DartMonkey.h"
 #include "TackShooter.h"
 #include "TurretParent.h"
+#include "Enemy.h"
 #include <vector>
+
 class MapManager
 {
 private:
@@ -20,6 +22,7 @@ private:
 	std::vector<Buttons> mUpgradeShopButtons;
 	std::vector<DartMonkey> mDartMonkeyTurrets;
 	std::vector<TackShooter> mTackShooterTurrets;
+	std::vector<Enemy> mEnemies;
 	Texture2D mDartMonkeyTexture, mTackShooterTexture;
 
 public:
@@ -38,6 +41,8 @@ public:
 	void SetMapIndex(int index);
 	Tile* GetTile(int i, int j);
 	Vector2 GetSpawnTileIndex();
+	void CreateNewEnemy();
+	void MoveEnemies();
 };
 
 

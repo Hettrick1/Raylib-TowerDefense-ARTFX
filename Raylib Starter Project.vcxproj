@@ -136,7 +136,6 @@
     <ClCompile Include="Buttons.cpp" />
     <ClCompile Include="DartMonkey.cpp" />
     <ClCompile Include="Datas.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="TackShooter.cpp" />

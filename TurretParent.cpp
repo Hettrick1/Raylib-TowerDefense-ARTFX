@@ -6,13 +6,14 @@ TurretParent::TurretParent()
 {
 }
 
-TurretParent::TurretParent(int price, Vector2 position, Texture2D& texture, float range, float shootingSpeed)
+TurretParent::TurretParent(int price, Vector2 position, Texture2D& texture, float range, float shootingSpeed, std::vector<Enemy>* allEnemies)
 {
 	mPrice = price;
 	mPosition = position;
 	mTexture = texture;
 	mRange = range;
 	mShootingSpeed = shootingSpeed;
+	mAllEnemies = allEnemies;
 }
 
 TurretParent::~TurretParent()

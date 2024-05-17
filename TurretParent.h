@@ -1,5 +1,8 @@
 #pragma once
 #include "raylib.h"
+#include "Enemy.h"
+#include <vector>
+
 class TurretParent
 {
 protected:
@@ -8,9 +11,10 @@ protected:
 	Texture2D mTexture;
 	float mRange;
 	float mShootingSpeed;
+	std::vector<Enemy>* mAllEnemies;
 public:
 	TurretParent();
-	TurretParent(int price, Vector2 position, Texture2D& texture, float range, float shootingSpeed);
+	TurretParent(int price, Vector2 position, Texture2D& texture, float range, float shootingSpeed, std::vector<Enemy>* allEnemies);
 	~TurretParent();
 	virtual void Update();
 	virtual void Draw();

@@ -1,6 +1,6 @@
 #include "TackShooter.h"
 
-TackShooter::TackShooter(Vector2 position, Texture2D& texture) : TurretParent(50, position, texture, 60, 0.5f)
+TackShooter::TackShooter(Vector2 position, Texture2D& texture, std::vector<Enemy>* allEnemies) : TurretParent(50, position, texture, 60, 0.5f, allEnemies)
 {
 	mTimerSinceLastShot = 0;
 }
