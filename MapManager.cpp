@@ -122,17 +122,19 @@ void MapManager::UpdateBuyShop()
 	for (Buttons& button : mBuyShopButtons) {
 		button.Update();
 	}
-	if (mBuyShopButtons[0].GetClickedBool()) {
+	if (GetMoney() > 3000 && mBuyShopButtons[0].GetClickedBool()) {
 		mBuyShopButtons[0].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
+		AddMoney(-3000);
 		HideShopMenu();
 		DartMonkey turret = DartMonkey({(float) mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mDartMonkeyTexture, &mEnemies);
 		mDartMonkeyTurrets.push_back(turret);
 		//create first turret
 	}
-	if (mBuyShopButtons[1].GetClickedBool()) {
+	if (GetMoney() > 5000 && mBuyShopButtons[1].GetClickedBool()) {
 		mBuyShopButtons[1].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
+		AddMoney(-5000);
 		HideShopMenu();
 		TackShooter turret = TackShooter({ (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mTackShooterTexture, &mEnemies);
 		mTackShooterTurrets.push_back(turret);
@@ -150,6 +152,7 @@ void MapManager::UpdateUpgradeShop()
 
 void MapManager::HideShopMenu()
 {
+	SetMoneyPos({ (float)(1150 - MeasureText(TextFormat("%i", GetMoney()), 50) / 2), GetMoneyPos().y });
 	mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->SetShowRectangle(false);
 	mShowBuyShop = false;
 	for (Buttons& button : mBuyShopButtons) {
@@ -178,12 +181,16 @@ void MapManager::Draw()
 			DrawCircle(enemy.mPosition.x, enemy.mPosition.y, 20, BLUE);
 		}
 	}
+	SetMoneyPos({ (float)(1150 - MeasureText(TextFormat("%i", GetMoney()), 50) / 2), GetMoneyPos().y });
+	DrawText(TextFormat("%i", GetMoney()), GetMoneyPos().x, GetMoneyPos().y, 50, BLACK);
 }
 void MapManager::DrawBuyShop()
 {
 	DrawRectangle(1000, 0, 400, 1000, GRAY);
 	SetMoneyPos({ (float)(1150 - MeasureText(TextFormat("%i", GetMoney()), 50) / 2), GetMoneyPos().y });
 	DrawText(TextFormat("%i", GetMoney()), GetMoneyPos().x, GetMoneyPos().y, 50, WHITE);
+	DrawText("3000", 1050, 460, 30, WHITE);
+	DrawText("5000", 1050, 760, 30, WHITE);
 	for (Buttons& button : mBuyShopButtons) {
 		button.Draw();
 	}
@@ -224,7 +231,7 @@ void MapManager::CreateNewEnemy()
 	newEnemy.mDestination = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
 	newEnemy.mDestinationIndex = mSpawnIndex;
 	newEnemy.mDirection = 0;
-	newEnemy.mHealth = 1;
+	newEnemy.mHealth = 2;
 	newEnemy.mSpawnPos = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
 	newEnemy.mPosition = { (float)newEnemy.mSpawnPos.x - 10, (float)newEnemy.mSpawnPos.y };
 	newEnemy.mSpeed = 100;

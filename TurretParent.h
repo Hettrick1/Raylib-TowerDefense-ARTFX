@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "Enemy.h"
+#include "Datas.h"
 #include <vector>
 
 class TurretParent

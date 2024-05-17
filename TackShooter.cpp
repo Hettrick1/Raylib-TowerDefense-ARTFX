@@ -31,8 +31,14 @@ void TackShooter::Update()
 			}
 			for (Enemy& enemy : *mAllEnemies) {
 				if (!enemy.mIsDead && CheckCollisionCircles(projectile.position, 5, enemy.mPosition, 20)) {
+					if (!projectile.isDestroyed) {
+						enemy.mHealth -= 1;
+						if (enemy.mHealth <= 0) {
+							enemy.mIsDead = true;
+							AddMoney(enemy.mCoins);
+						}
+					}
 					projectile.isDestroyed = true;
-					enemy.mIsDead = true;
 				}
 			}
 		}
