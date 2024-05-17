@@ -89,6 +89,17 @@ void MapManager::Update()
 		UpdateBuyShop();
 	}
 	for (DartMonkey& turret : mDartMonkeyTurrets) {
+		for (int j = 0; j < mEnemies.size(); j++) {
+			float distance = sqrt(pow(mEnemies[j].mPosition.x - turret.GetPosition().x, 2) + pow(mEnemies[j].mPosition.y - turret.GetPosition().y, 2));
+			if (!mEnemies[j].mIsDead && distance < turret.GetRange() + 20) {
+				turret.SetRotation(atan2f(mEnemies[j].mPosition.y - turret.GetPosition().y, mEnemies[j].mPosition.x - turret.GetPosition().x));
+				turret.SetCanShoot(true);
+				break;
+			}
+			else {
+				turret.SetCanShoot(false);
+			}
+		}
 		turret.Update();
 	}
 	for (TackShooter& turret : mTackShooterTurrets) {
