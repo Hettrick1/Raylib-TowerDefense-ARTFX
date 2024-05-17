@@ -235,7 +235,7 @@ void MapManager::CreateNewEnemy()
 
 void MapManager::MoveEnemies()
 {
-	for (Enemy& enemy : mEnemies) { // Bon c'est pas propre mais j'avais une inclusion circulaire et c'est le moyen le plus simple de la régler
+	for (Enemy& enemy : mEnemies) { // Bon c'est pas propre mais j'avais une inclusion circulaire et c'est le moyen le plus simple que j'ai trouvé de la régler
 		if (!enemy.mIsDead) {
 			switch (enemy.mDirection)
 			{
