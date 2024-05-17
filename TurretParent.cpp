@@ -52,3 +52,8 @@ float TurretParent::GetShootingSpeed()
 {
 	return mShootingSpeed;
 }
+
+void TurretParent::SetCanShoot(bool shoot)
+{
+	mCanShoot = shoot;
+}

@@ -12,5 +12,6 @@ struct Enemy
 	float mSpeed;
 	int	mDamage;
 	int	mCoins;
+	bool mIsDead;
 };
 

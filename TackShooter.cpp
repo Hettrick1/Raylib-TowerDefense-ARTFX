@@ -11,17 +11,30 @@ TackShooter::~TackShooter()
 
 void TackShooter::Update()
 {
-	mTimerSinceLastShot += GetFrameTime();
-	if (mTimerSinceLastShot > 1.5) {
+	if (mCanShoot) {
+		mTimerSinceLastShot -= GetFrameTime();
+		if (mTimerSinceLastShot < 0) {
+			mTimerSinceLastShot = 1;
+			Shoot();
+		}
+	}
+	if (!mCanShoot) {
 		mTimerSinceLastShot = 0;
-		Shoot();
 	}
 	for (Projectile& projectile : projectiles) {
-		projectile.position.x += 100 * projectile.velocity.x * GetFrameTime();
-		projectile.position.y += 100 * projectile.velocity.y * GetFrameTime();
-		float distance = sqrt(pow(projectile.position.x - projectile.startPosition.x, 2) + pow(projectile.position.y - projectile.startPosition.y, 2));
-		if (distance > projectile.range) {
-			projectile.isDestroyed = true;
+		if (!projectile.isDestroyed) {
+			projectile.position.x += 150 * projectile.velocity.x * GetFrameTime();
+			projectile.position.y += 150 * projectile.velocity.y * GetFrameTime();
+			float distance = sqrt(pow(projectile.position.x - projectile.startPosition.x, 2) + pow(projectile.position.y - projectile.startPosition.y, 2));
+			if (distance > projectile.range) {
+				projectile.isDestroyed = true;
+			}
+			for (Enemy& enemy : *mAllEnemies) {
+				if (CheckCollisionCircles(projectile.position, 5, enemy.mPosition, 20)) {
+					projectile.isDestroyed = true;
+					enemy.mIsDead = true;
+				}
+			}
 		}
 		if (projectile.isDestroyed) {
 			projectiles.erase(begin(projectiles));
@@ -33,7 +46,9 @@ void TackShooter::Draw()
 {
 	DrawTextureEx(mTexture, mPosition, 0, 1, WHITE);
 	for (Projectile& projectile : projectiles) {
-		DrawCircle(projectile.position.x, projectile.position.y, 5, BLUE);
+		if (!projectile.isDestroyed) {
+			DrawCircle(projectile.position.x, projectile.position.y, 5, BLUE);
+		}
 	}
 }
 

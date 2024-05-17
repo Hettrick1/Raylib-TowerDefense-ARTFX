@@ -1,5 +1,7 @@
 #include "MapManager.h"
 
+int timer = 0;
+
 MapManager::MapManager()
 {
 	mMapImage = Image();
@@ -62,6 +64,11 @@ void MapManager::Start()
 
 void MapManager::Update()
 {
+	timer += 1;
+	if (timer > 50) {
+		CreateNewEnemy();
+		timer = 0;
+	}
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {		
 			if (mMap[i][j]->GetTileType() == TileType::GRASS) {
@@ -85,6 +92,16 @@ void MapManager::Update()
 		turret.Update();
 	}
 	for (TackShooter& turret : mTackShooterTurrets) {
+		for (int j = 0; j < mEnemies.size(); j++) {
+			float distance = sqrt(pow(mEnemies[j].mPosition.x - turret.GetPosition().x, 2) + pow(mEnemies[j].mPosition.y - turret.GetPosition().y, 2));
+			if (!mEnemies[j].mIsDead && distance < turret.GetRange() + 20) {
+				turret.SetCanShoot(true);
+				break;
+			}
+			else {
+				turret.SetCanShoot(false);
+			}
+		}
 		turret.Update();
 	}
 	MoveEnemies();
@@ -146,7 +163,9 @@ void MapManager::Draw()
 		turret.Draw();
 	}
 	for (Enemy& enemy : mEnemies) {
-		DrawCircle(enemy.mPosition.x, enemy.mPosition.y, 20, BLUE);
+		if (!enemy.mIsDead) {
+			DrawCircle(enemy.mPosition.x, enemy.mPosition.y, 20, BLUE);
+		}
 	}
 }
 void MapManager::DrawBuyShop()
@@ -198,6 +217,7 @@ void MapManager::CreateNewEnemy()
 	newEnemy.mSpawnPos = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
 	newEnemy.mPosition = { (float)newEnemy.mSpawnPos.x - 10, (float)newEnemy.mSpawnPos.y };
 	newEnemy.mSpeed = 100;
+	newEnemy.mIsDead = false;
 
 	mEnemies.push_back(newEnemy);
 }
@@ -205,106 +225,108 @@ void MapManager::CreateNewEnemy()
 void MapManager::MoveEnemies()
 {
 	for (Enemy& enemy : mEnemies) { // Bon c'est pas propre mais j'avais une inclusion circulaire et c'est le moyen le plus simple de la régler
-		switch (enemy.mDirection)
-		{
-		case 0:
-			enemy.mPosition.x += enemy.mSpeed * GetFrameTime();
-			break;
-		case 1:
-			enemy.mPosition.y += enemy.mSpeed * GetFrameTime();
-			break;
-		case 2:
-			enemy.mPosition.y -= enemy.mSpeed * GetFrameTime();
-			break;
-		case 3:
-			enemy.mPosition.x -= enemy.mSpeed * GetFrameTime();
-			break;
-		}
-		if ((enemy.mDirection == 0 && enemy.mPosition.x > enemy.mDestination.x) || (enemy.mDirection == 1 && enemy.mPosition.y > enemy.mDestination.y) || (enemy.mDirection == 2 && enemy.mPosition.y < enemy.mDestination.y) || (enemy.mDirection == 3 && enemy.mPosition.x < enemy.mDestination.x)) {
+		if (!enemy.mIsDead) {
 			switch (enemy.mDirection)
 			{
-			case 0: // right
-				if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 0;
-					enemy.mDestinationIndex.x += 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 1;
-					enemy.mDestinationIndex.y += 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 2;
-					enemy.mDestinationIndex.y -= 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else {
-					std::cout << "ATTACK";
-				}
+			case 0:
+				enemy.mPosition.x += enemy.mSpeed * GetFrameTime();
 				break;
-			case 1: // down
-				if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 1;
-					enemy.mDestinationIndex.y += 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 3;
-					enemy.mDestinationIndex.x -= 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 0;
-					enemy.mDestinationIndex.x += 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else {
-					std::cout << "ATTACK";
-				}
+			case 1:
+				enemy.mPosition.y += enemy.mSpeed * GetFrameTime();
 				break;
-			case 2: // up
-				if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 2;
-					enemy.mDestinationIndex.y -= 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 0;
-					enemy.mDestinationIndex.x += 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 3;
-					enemy.mDestinationIndex.x -= 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else {
-					std::cout << "ATTACK";
-				}
+			case 2:
+				enemy.mPosition.y -= enemy.mSpeed * GetFrameTime();
 				break;
-			case 3: // left
-				if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 3;
-					enemy.mDestinationIndex.x -= 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 2;
-					enemy.mDestinationIndex.y -= 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
-					enemy.mDirection = 1;
-					enemy.mDestinationIndex.y += 1;
-					enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
-				}
-				else {
-					std::cout << "ATTACK";
-				}
+			case 3:
+				enemy.mPosition.x -= enemy.mSpeed * GetFrameTime();
 				break;
 			}
+			if ((enemy.mDirection == 0 && enemy.mPosition.x > enemy.mDestination.x) || (enemy.mDirection == 1 && enemy.mPosition.y > enemy.mDestination.y) || (enemy.mDirection == 2 && enemy.mPosition.y < enemy.mDestination.y) || (enemy.mDirection == 3 && enemy.mPosition.x < enemy.mDestination.x)) {
+				switch (enemy.mDirection)
+				{
+				case 0: // right
+					if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 0;
+						enemy.mDestinationIndex.x += 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 1;
+						enemy.mDestinationIndex.y += 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 2;
+						enemy.mDestinationIndex.y -= 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else {
+						std::cout << "ATTACK";
+					}
+					break;
+				case 1: // down
+					if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 1;
+						enemy.mDestinationIndex.y += 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 3;
+						enemy.mDestinationIndex.x -= 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 0;
+						enemy.mDestinationIndex.x += 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else {
+						std::cout << "ATTACK";
+					}
+					break;
+				case 2: // up
+					if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 2;
+						enemy.mDestinationIndex.y -= 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x + 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 0;
+						enemy.mDestinationIndex.x += 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 3;
+						enemy.mDestinationIndex.x -= 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else {
+						std::cout << "ATTACK";
+					}
+					break;
+				case 3: // left
+					if (GetTile(enemy.mDestinationIndex.x - 1, enemy.mDestinationIndex.y)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 3;
+						enemy.mDestinationIndex.x -= 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y - 1)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 2;
+						enemy.mDestinationIndex.y -= 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else if (GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y + 1)->GetTileType() == TileType::ROAD) {
+						enemy.mDirection = 1;
+						enemy.mDestinationIndex.y += 1;
+						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
+					}
+					else {
+						std::cout << "ATTACK";
+					}
+					break;
+				}
+			}
 		}
-	}
+	}	
 }
 
