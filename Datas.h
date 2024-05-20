@@ -13,3 +13,4 @@ void AddMoney(int amount);
 void AddLife(int amount);
 void ResetLife();
 int Getlife();
+void ResetMoney();

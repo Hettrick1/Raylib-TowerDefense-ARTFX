@@ -54,6 +54,7 @@ void WaveManager::Update()
 void WaveManager::Draw()
 {
 	if (!mMap->GetShowBuyShop()) {
+		DrawText(TextFormat("Wave : %i", mWaveCount), 1050, 920, 30, BLACK);
 		DrawText("Next Wave", 1050, 700, 30, BLACK);
 		mPassButton.Draw();
 	}
@@ -71,7 +72,7 @@ void WaveManager::NewWave()
 			mTimer -= GetFrameTime();
 			if (mTimer < 0) {
 				mTimer = mWaveSpawnDelay;
-				mMap->CreateNewEnemy();
+				mMap->CreateNewEnemy(mWaveCount);
 			}
 		}
 		else {

@@ -1,6 +1,6 @@
 #include "Datas.h"
 
-extern int money = 10000;
+extern int money = 7000;
 extern int life = 50;
 extern Vector2 moneyPos = {1000, 100};
 
@@ -36,5 +36,10 @@ void ResetLife()
 int Getlife()
 {
 	return life;
+}
+
+void ResetMoney()
+{
+	money = 7000;
 }
 

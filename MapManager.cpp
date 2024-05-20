@@ -3,11 +3,11 @@
 MapManager::MapManager()
 {
 	mMapImage = Image();
-	mMapIndex = 2;
+	mMapIndex = 1;
 	mSpawnIndex = {0,0};
 	mTileClickedIndex = {0,0};
 	mShowBuyShop = false;
-	mLoose = false;
+	mLoose = true;
 	mBuyShopButtons = {
 		Buttons({1050, 250, 200, 200}, YELLOW, "Turret 1", BLACK, 30),
 		Buttons({1050, 550, 200, 200}, YELLOW, "Turret 2", BLACK, 30),
@@ -133,8 +133,12 @@ void MapManager::Update()
 	if (AreAllEnemiesDead()) {
 		mEnemies.clear();
 	}
-	if (Getlife <= 0) {
+	if (Getlife() <= 0) {
 		mLoose = true;
+		mEnemies.clear();
+		mTackShooterTurrets.clear();
+		mDartMonkeyTurrets.clear();
+
 	}
 }
 void MapManager::UpdateBuyShop()
@@ -249,19 +253,19 @@ Vector2 MapManager::GetSpawnTileIndex()
 	return mSpawnIndex;
 }
 
-void MapManager::CreateNewEnemy()
+void MapManager::CreateNewEnemy(int wave)
 {
 	Enemy newEnemy;
 
 	newEnemy.mCoins = 100;
-	newEnemy.mDamage = 1;
+	newEnemy.mDamage = 0 + wave;
 	newEnemy.mDestination = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
 	newEnemy.mDestinationIndex = mSpawnIndex;
 	newEnemy.mDirection = 0;
-	newEnemy.mHealth = 2;
+	newEnemy.mHealth = 0 + wave;
 	newEnemy.mSpawnPos = GetTile((int)mSpawnIndex.x, (int)mSpawnIndex.y)->GetCenterPos();
 	newEnemy.mPosition = { (float)newEnemy.mSpawnPos.x - 10, (float)newEnemy.mSpawnPos.y };
-	newEnemy.mSpeed = 100;
+	newEnemy.mSpeed = 80 + wave * 10;
 	newEnemy.mIsDead = false;
 
 	mEnemies.push_back(newEnemy);

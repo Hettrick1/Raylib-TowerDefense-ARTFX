@@ -42,7 +42,7 @@ public:
 	void SetMapIndex(int index);
 	Tile* GetTile(int i, int j);
 	Vector2 GetSpawnTileIndex();
-	void CreateNewEnemy();
+	void CreateNewEnemy(int wave);
 	void MoveEnemies();
 	int GetEnemiesRemaining();
 	bool AreAllEnemiesDead();
