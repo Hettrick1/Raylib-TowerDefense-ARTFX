@@ -53,7 +53,7 @@ void TackShooter::Draw()
 	DrawTextureEx(mTexture, mPosition, 0, 1, WHITE);
 	for (Projectile& projectile : projectiles) {
 		if (!projectile.isDestroyed) {
-			DrawCircle(projectile.position.x, projectile.position.y, 5, BLUE);
+			DrawCircle(projectile.position.x, projectile.position.y, 5, BLACK);
 		}
 	}
 }

@@ -1,7 +1,5 @@
 #include "MapManager.h"
 
-int timer = 0;
-
 MapManager::MapManager()
 {
 	mMapImage = Image();
@@ -9,6 +7,7 @@ MapManager::MapManager()
 	mSpawnIndex = {0,0};
 	mTileClickedIndex = {0,0};
 	mShowBuyShop = false;
+	mLoose = false;
 	mBuyShopButtons = {
 		Buttons({1050, 250, 200, 200}, YELLOW, "Turret 1", BLACK, 30),
 		Buttons({1050, 550, 200, 200}, YELLOW, "Turret 2", BLACK, 30),
@@ -19,6 +18,8 @@ MapManager::MapManager()
 	};
 	mDartMonkeyTexture = Texture2D();
 	mTackShooterTexture = Texture2D();
+	mBloonTexture = Texture2D();
+	mCastleTexture = Texture2D();
 }
 
 MapManager::~MapManager()
@@ -27,6 +28,8 @@ MapManager::~MapManager()
 
 void MapManager::Load()
 {
+	mShowBuyShop = false;
+	mLoose = false;
 	int index = 0;
 	mMapImage = LoadImage(TextFormat("maps/Map%i.png", mMapIndex));
 	Color* colors = LoadImageColors(mMapImage);
@@ -48,6 +51,10 @@ void MapManager::Load()
 				mMap[i][j]->ChangeType(TileType::ROAD);
 				mSpawnIndex = { (float)j, (float)i };
 			}
+			else if (colors[index].b == 255 && colors[index].r == 255 && colors[index].g == 255) {
+				mMap[i][j]->ChangeType(TileType::GRASS);
+				mCastlePos = mMap[i][j]->GetCenterPos();
+			}
 			index += 1;
 		}
 	}
@@ -55,7 +62,9 @@ void MapManager::Load()
 	UnloadImage(mMapImage);
 	mDartMonkeyTexture = LoadTexture("resources/sprites/DartMonkey.png");
 	mTackShooterTexture = LoadTexture("resources/sprites/TackShooter.png");
-	CreateNewEnemy();
+	mBloonTexture = LoadTexture("resources/sprites/bloons.png");
+	mCastleTexture = LoadTexture("resources/sprites/Castle.png");
+	ResetLife();
 }
 
 void MapManager::Start()
@@ -64,11 +73,6 @@ void MapManager::Start()
 
 void MapManager::Update()
 {
-	timer += 1;
-	if (timer > 50) {
-		CreateNewEnemy();
-		timer = 0;
-	}
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {		
 			if (mMap[i][j]->GetTileType() == TileType::GRASS) {
@@ -89,33 +93,49 @@ void MapManager::Update()
 		UpdateBuyShop();
 	}
 	for (DartMonkey& turret : mDartMonkeyTurrets) {
-		for (int j = 0; j < mEnemies.size(); j++) {
-			float distance = sqrt(pow(mEnemies[j].mPosition.x - turret.GetPosition().x, 2) + pow(mEnemies[j].mPosition.y - turret.GetPosition().y, 2));
-			if (!mEnemies[j].mIsDead && distance < turret.GetRange() + 20) {
-				turret.SetRotation(atan2f(mEnemies[j].mPosition.y - turret.GetPosition().y, mEnemies[j].mPosition.x - turret.GetPosition().x));
-				turret.SetCanShoot(true);
-				break;
+		if (mEnemies.size() > 0) {
+			for (int j = 0; j < mEnemies.size(); j++) {
+				float distance = sqrt(pow(mEnemies[j].mPosition.x - turret.GetPosition().x, 2) + pow(mEnemies[j].mPosition.y - turret.GetPosition().y, 2));
+				if (!mEnemies[j].mIsDead && distance < turret.GetRange() + 20) {
+					turret.SetRotation(atan2f(mEnemies[j].mPosition.y - turret.GetPosition().y, mEnemies[j].mPosition.x - turret.GetPosition().x));
+					turret.SetCanShoot(true);
+					break;
+				}
+				else {
+					turret.SetCanShoot(false);
+				}
 			}
-			else {
-				turret.SetCanShoot(false);
-			}
+		}
+		else {
+			turret.SetCanShoot(false);
 		}
 		turret.Update();
 	}
 	for (TackShooter& turret : mTackShooterTurrets) {
-		for (int j = 0; j < mEnemies.size(); j++) {
-			float distance = sqrt(pow(mEnemies[j].mPosition.x - turret.GetPosition().x, 2) + pow(mEnemies[j].mPosition.y - turret.GetPosition().y, 2));
-			if (!mEnemies[j].mIsDead && distance < turret.GetRange() + 20) {
-				turret.SetCanShoot(true);
-				break;
+		if (mEnemies.size() > 0) {
+			for (int j = 0; j < mEnemies.size(); j++) {
+				float distance = sqrt(pow(mEnemies[j].mPosition.x - turret.GetPosition().x, 2) + pow(mEnemies[j].mPosition.y - turret.GetPosition().y, 2));
+				if (!mEnemies[j].mIsDead && distance < turret.GetRange() + 20) {
+					turret.SetCanShoot(true);
+					break;
+				}
+				else {
+					turret.SetCanShoot(false);
+				}
 			}
-			else {
-				turret.SetCanShoot(false);
-			}
+		}
+		else {
+			turret.SetCanShoot(false);
 		}
 		turret.Update();
 	}
 	MoveEnemies();
+	if (AreAllEnemiesDead()) {
+		mEnemies.clear();
+	}
+	if (Getlife <= 0) {
+		mLoose = true;
+	}
 }
 void MapManager::UpdateBuyShop()
 {
@@ -157,6 +177,8 @@ void MapManager::HideShopMenu()
 	mShowBuyShop = false;
 	for (Buttons& button : mBuyShopButtons) {
 		button.ResetTimer();
+		button.SetHoveredBool(false);
+		SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 	}
 }
 
@@ -170,6 +192,10 @@ void MapManager::Draw()
 	if (mShowBuyShop) {
 		DrawBuyShop();
 	}
+	else {
+		DrawText(TextFormat("%i", GetMoney()), GetMoneyPos().x, GetMoneyPos().y, 50, BLACK);
+		DrawText(TextFormat("%i", Getlife()), GetMoneyPos().x + MeasureText(TextFormat("%i", Getlife()), 50)/2, GetMoneyPos().y + 150, 50, RED);
+	}
 	for (DartMonkey& turret : mDartMonkeyTurrets) {
 		turret.Draw();
 	}
@@ -178,11 +204,11 @@ void MapManager::Draw()
 	}
 	for (Enemy& enemy : mEnemies) {
 		if (!enemy.mIsDead) {
-			DrawCircle(enemy.mPosition.x, enemy.mPosition.y, 20, BLUE);
+			DrawTexture(mBloonTexture,enemy.mPosition.x - mBloonTexture.width/2, enemy.mPosition.y - mBloonTexture.height/2, WHITE);
 		}
 	}
 	SetMoneyPos({ (float)(1150 - MeasureText(TextFormat("%i", GetMoney()), 50) / 2), GetMoneyPos().y });
-	DrawText(TextFormat("%i", GetMoney()), GetMoneyPos().x, GetMoneyPos().y, 50, BLACK);
+	DrawTextureEx(mCastleTexture, { mCastlePos.x - mCastleTexture.width / 2, mCastlePos.y - mCastleTexture.height / 2 }, 0 ,1,WHITE);
 }
 void MapManager::DrawBuyShop()
 {
@@ -202,9 +228,10 @@ void MapManager::DrawUpgradeShop()
 
 void MapManager::Unload()
 {
-	std::cout << mEnemies.size();
 	UnloadTexture(mDartMonkeyTexture);
 	UnloadTexture(mTackShooterTexture);
+	UnloadTexture(mBloonTexture);
+	UnloadTexture(mCastleTexture);
 }
 
 void MapManager::SetMapIndex(int index)
@@ -278,8 +305,9 @@ void MapManager::MoveEnemies()
 						enemy.mDestinationIndex.y -= 1;
 						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
 					}
-					else {
-						std::cout << "ATTACK";
+					else { //ATTACK
+						enemy.mIsDead = true;
+						AddLife(-enemy.mDamage);
 					}
 					break;
 				case 1: // down
@@ -298,8 +326,9 @@ void MapManager::MoveEnemies()
 						enemy.mDestinationIndex.x += 1;
 						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
 					}
-					else {
-						std::cout << "ATTACK";
+					else { //ATTACK
+						enemy.mIsDead = true;
+						AddLife(-enemy.mDamage);
 					}
 					break;
 				case 2: // up
@@ -318,8 +347,9 @@ void MapManager::MoveEnemies()
 						enemy.mDestinationIndex.x -= 1;
 						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
 					}
-					else {
-						std::cout << "ATTACK";
+					else { //ATTACK
+						enemy.mIsDead = true;
+						AddLife(-enemy.mDamage);
 					}
 					break;
 				case 3: // left
@@ -338,13 +368,39 @@ void MapManager::MoveEnemies()
 						enemy.mDestinationIndex.y += 1;
 						enemy.mDestination = GetTile(enemy.mDestinationIndex.x, enemy.mDestinationIndex.y)->GetCenterPos();
 					}
-					else {
-						std::cout << "ATTACK";
+					else { //ATTACK
+						enemy.mIsDead = true;
+						AddLife(-enemy.mDamage);
 					}
 					break;
 				}
 			}
 		}
 	}	
+}
+
+int MapManager::GetEnemiesRemaining()
+{
+	return mEnemies.size();
+}
+
+bool MapManager::AreAllEnemiesDead()
+{
+	for (Enemy& enemy : mEnemies) {
+		if (!enemy.mIsDead) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool MapManager::GetShowBuyShop()
+{
+	return mShowBuyShop;
+}
+
+bool MapManager::GetLoose()
+{
+	return mLoose;
 }
 

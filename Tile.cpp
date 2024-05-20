@@ -55,7 +55,7 @@ void Tile::ChangeType(TileType type)
 		mColor = GRAY;
 	}
 	else if (mType == TileType::TURRET) {
-		mColor = RED;
+		mColor = LIGHTGRAY;
 	}
 }
 

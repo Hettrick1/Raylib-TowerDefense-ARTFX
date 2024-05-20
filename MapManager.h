@@ -17,13 +17,14 @@ private:
 	int mMapIndex;
 	Vector2 mSpawnIndex;
 	Vector2 mTileClickedIndex;
-	bool mShowBuyShop;
+	Vector2 mCastlePos;
+	bool mShowBuyShop, mLoose;
 	std::vector<Buttons> mBuyShopButtons;
 	std::vector<Buttons> mUpgradeShopButtons;
 	std::vector<DartMonkey> mDartMonkeyTurrets;
 	std::vector<TackShooter> mTackShooterTurrets;
 	std::vector<Enemy> mEnemies;
-	Texture2D mDartMonkeyTexture, mTackShooterTexture;
+	Texture2D mDartMonkeyTexture, mTackShooterTexture, mBloonTexture, mCastleTexture;
 
 public:
 	MapManager();
@@ -43,6 +44,10 @@ public:
 	Vector2 GetSpawnTileIndex();
 	void CreateNewEnemy();
 	void MoveEnemies();
+	int GetEnemiesRemaining();
+	bool AreAllEnemiesDead();
+	bool GetShowBuyShop();
+	bool GetLoose();
 };
 
 

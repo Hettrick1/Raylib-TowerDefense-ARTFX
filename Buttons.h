@@ -27,6 +27,7 @@ private:
     float mTextureSize;
     float mBorderThickness;
 public:
+    Buttons();
     Buttons(Vector2 position, Vector2 size, Color buttonColor, std::string text, Color textColor, int fontSize);
     Buttons(Rectangle rectangle, Color buttonColor, std::string text, Color textColor, int fontSize);
     Buttons(Rectangle rectangle, Color buttonColor, Texture2D& texture, float textureSize);

@@ -54,7 +54,7 @@ void DartMonkey::Draw()
 	DrawTexturePro(mTexture, { 0, 0, (float)mTexture.width, (float)mTexture.height }, { mPosition.x + (float)mTexture.width / 2, mPosition.y + (float)mTexture.height / 2, (float)mTexture.width, (float)mTexture.height }, { (float)mTexture.width/2, (float)mTexture.height/2 }, 90+mRotation, WHITE);
 	for (Projectile& projectile : projectiles) {
 		if (!projectile.isDestroyed) {
-			DrawCircle(projectile.position.x, projectile.position.y, 5, BLUE);
+			DrawCircle(projectile.position.x, projectile.position.y, 5, RED);
 		}
 	}
 }

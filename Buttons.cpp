@@ -1,5 +1,9 @@
 #include "Buttons.h"
 
+Buttons::Buttons()
+{
+}
+
 Buttons::Buttons(Vector2 position, Vector2 size, Color buttonColor, std::string text, Color textColor, int fontSize)
 {
 	mPosition = position;

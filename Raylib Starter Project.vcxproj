@@ -141,6 +141,7 @@
     <ClCompile Include="TackShooter.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TurretParent.cpp" />
+    <ClCompile Include="WaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buttons.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Tile.h" />
     <ClInclude Include="TileType.h" />
     <ClInclude Include="TurretParent.h" />
+    <ClInclude Include="WaveManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
