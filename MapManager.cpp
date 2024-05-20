@@ -155,6 +155,9 @@ void MapManager::UpdateBuyShop()
 		mDartMonkeyTurrets.push_back(turret);
 		//create first turret
 	}
+	else {
+		mBuyShopButtons[0].SetClickedBool(false);
+	}
 	if (GetMoney() > 5000 && mBuyShopButtons[1].GetClickedBool()) {
 		mBuyShopButtons[1].SetClickedBool(false);
 		mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->ChangeType(TileType::TURRET);
@@ -163,6 +166,9 @@ void MapManager::UpdateBuyShop()
 		TackShooter turret = TackShooter({ (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosX(), (float)mMap[(int)mTileClickedIndex.x][(int)mTileClickedIndex.y]->GetPosY() }, mTackShooterTexture, &mEnemies);
 		mTackShooterTurrets.push_back(turret);
 		//create second turret
+	}
+	else {
+		mBuyShopButtons[1].SetClickedBool(false);
 	}
 	if (mBuyShopButtons[2].GetClickedBool()) {
 		mBuyShopButtons[2].SetClickedBool(false);
